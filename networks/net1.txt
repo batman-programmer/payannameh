@@ -1,0 +1,13 @@
+  Page 1                                    Mon Sep 01 15:54:27 2025
+
+  ******************************************************************
+  *                           E P A N E T                          *
+  *                   Hydraulic and Water Quality                  *
+  *                   Analysis for Pipe Networks                   *
+  *                         Version 2.2                            *
+  ******************************************************************
+  
+  Error 202: illegal numeric value LPS in [OPTIONS] section:
+  FLOW_UNITS         LPS
+
+  Error 200: one or more errors in input file
