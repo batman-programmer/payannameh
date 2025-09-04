@@ -1,0 +1,8 @@
+.idea
+venv/
+.ipynb_checkpoints
+models/
+models
+code/DQN/models
+code/DQN/plt_results
+project.ipynb
