@@ -79,18 +79,24 @@ class WaterNetworkEnv(gym.Env):
 
     def step(self, action_index: int):
         actions = self.actions_index[action_index]
-        if self.do_log:
-            print(f"ACTION_INDEX {action_index} STEP {self.time}, Action {[self.PSI_UNIT*a for a in actions]}")
         for i, valve in enumerate(self.wn.valves()):
             self._change_valve_setting(int(actions[i]), valve[1])
         self.time = self.wn.sim_time
         results = self.sim.run_sim()
         if len(results.node["pressure"].values) == 0:
-            return self.state, 0, False, {}
-        self.state = results.node["pressure"].values[-1] * self.PSI_UNIT / 100
-        reward = self._calculate_reward()
-        done = False
-        return self.state, reward, done, {}
+            reward = 0
+            done = False
+            state = self.state
+        else:
+            state = results.node["pressure"].values[-1] * self.PSI_UNIT / 100
+            reward = self._calculate_reward()
+            done = False
+
+        if self.do_log:
+            print(f"STEP {self.time}: Reward={reward:.2f}, Done={done}, Pressure={state}, Actions={[self.PSI_UNIT*a for a in actions]}")
+
+        self.state = state
+        return state, reward, done, {}
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         self.wn.reset_initial_values()
@@ -206,6 +212,10 @@ class DQN_WaterNetwork:
                 # decay epsilon
                 self.epsilon -= self.epsilon_interval / self.epsilon_greedy_frames
                 self.epsilon = max(self.epsilon, self.epsilon_min)
+
+                # print for logging
+                if self.do_log:
+                    print(f"Frame {frame_count}: Action={action}, Reward={reward:.2f}, Done={done}, Epsilon={self.epsilon:.3f}")
 
                 # record history
                 self.action_history.append(action)
